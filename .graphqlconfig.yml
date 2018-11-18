@@ -1,0 +1,20 @@
+# https://www.howtographql.com/graphql-js/5-connecting-server-and-database/
+# Each project represents one of our GraphQL APIs
+
+# There are two main benefits you now get from this setup:
+# 1. You can interact with both GraphQL APIs in a Playground
+#    side-by-side.
+# 2. When deploying the Prisma service with prisma deploy, the
+#    Prisma CLI automatically downloads the generated Prisma
+#    database schema into the specified location.
+
+projects:
+  legendary-api:
+    schemaPath: server/schema.js
+    extensions:
+      endpoints:
+        default: http://localhost:4000/graphql
+  db-postgresql:
+    schemaPath: database/generated/prisma.graphql
+    extensions:
+      prisma: database/prisma.yml

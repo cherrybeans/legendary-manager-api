@@ -1,0 +1,373 @@
+# source: http://localhost:4466
+# timestamp: Sat Nov 17 2018 19:50:06 GMT+0100 (CET)
+
+type AggregateToDo {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+scalar DateTime
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createToDo(data: ToDoCreateInput!): ToDo!
+  updateToDo(data: ToDoUpdateInput!, where: ToDoWhereUniqueInput!): ToDo
+  deleteToDo(where: ToDoWhereUniqueInput!): ToDo
+  upsertToDo(where: ToDoWhereUniqueInput!, create: ToDoCreateInput!, update: ToDoUpdateInput!): ToDo!
+  updateManyToDoes(data: ToDoUpdateManyMutationInput!, where: ToDoWhereInput): BatchPayload!
+  deleteManyToDoes(where: ToDoWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  toDoes(where: ToDoWhereInput, orderBy: ToDoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ToDo]!
+  toDo(where: ToDoWhereUniqueInput!): ToDo
+  toDoesConnection(where: ToDoWhereInput, orderBy: ToDoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ToDoConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Subscription {
+  toDo(where: ToDoSubscriptionWhereInput): ToDoSubscriptionPayload
+}
+
+type ToDo implements Node {
+  id: ID!
+  priority: String!
+  description: String!
+  completed: Boolean!
+  reminder: DateTime
+  dueDate: DateTime
+}
+
+"""A connection to a list of items."""
+type ToDoConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ToDoEdge]!
+  aggregate: AggregateToDo!
+}
+
+input ToDoCreateInput {
+  priority: String!
+  description: String!
+  completed: Boolean
+  reminder: DateTime
+  dueDate: DateTime
+}
+
+"""An edge in a connection."""
+type ToDoEdge {
+  """The item at the end of the edge."""
+  node: ToDo!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ToDoOrderByInput {
+  id_ASC
+  id_DESC
+  priority_ASC
+  priority_DESC
+  description_ASC
+  description_DESC
+  completed_ASC
+  completed_DESC
+  reminder_ASC
+  reminder_DESC
+  dueDate_ASC
+  dueDate_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ToDoPreviousValues {
+  id: ID!
+  priority: String!
+  description: String!
+  completed: Boolean!
+  reminder: DateTime
+  dueDate: DateTime
+}
+
+type ToDoSubscriptionPayload {
+  mutation: MutationType!
+  node: ToDo
+  updatedFields: [String!]
+  previousValues: ToDoPreviousValues
+}
+
+input ToDoSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ToDoSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ToDoSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ToDoSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ToDoWhereInput
+}
+
+input ToDoUpdateInput {
+  priority: String
+  description: String
+  completed: Boolean
+  reminder: DateTime
+  dueDate: DateTime
+}
+
+input ToDoUpdateManyMutationInput {
+  priority: String
+  description: String
+  completed: Boolean
+  reminder: DateTime
+  dueDate: DateTime
+}
+
+input ToDoWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ToDoWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ToDoWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ToDoWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  priority: String
+
+  """All values that are not equal to given value."""
+  priority_not: String
+
+  """All values that are contained in given list."""
+  priority_in: [String!]
+
+  """All values that are not contained in given list."""
+  priority_not_in: [String!]
+
+  """All values less than the given value."""
+  priority_lt: String
+
+  """All values less than or equal the given value."""
+  priority_lte: String
+
+  """All values greater than the given value."""
+  priority_gt: String
+
+  """All values greater than or equal the given value."""
+  priority_gte: String
+
+  """All values containing the given string."""
+  priority_contains: String
+
+  """All values not containing the given string."""
+  priority_not_contains: String
+
+  """All values starting with the given string."""
+  priority_starts_with: String
+
+  """All values not starting with the given string."""
+  priority_not_starts_with: String
+
+  """All values ending with the given string."""
+  priority_ends_with: String
+
+  """All values not ending with the given string."""
+  priority_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  completed: Boolean
+
+  """All values that are not equal to given value."""
+  completed_not: Boolean
+  reminder: DateTime
+
+  """All values that are not equal to given value."""
+  reminder_not: DateTime
+
+  """All values that are contained in given list."""
+  reminder_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  reminder_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  reminder_lt: DateTime
+
+  """All values less than or equal the given value."""
+  reminder_lte: DateTime
+
+  """All values greater than the given value."""
+  reminder_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  reminder_gte: DateTime
+  dueDate: DateTime
+
+  """All values that are not equal to given value."""
+  dueDate_not: DateTime
+
+  """All values that are contained in given list."""
+  dueDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dueDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dueDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dueDate_lte: DateTime
+
+  """All values greater than the given value."""
+  dueDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dueDate_gte: DateTime
+}
+
+input ToDoWhereUniqueInput {
+  id: ID
+}

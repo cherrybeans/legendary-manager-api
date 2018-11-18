@@ -1,0 +1,15 @@
+type User {
+  id: ID! @unique
+  name: String!
+  email: String! @unique
+  todos: [ToDo!]!
+}
+
+type ToDo {
+  id: ID! @unique
+  priority: String!
+  description: String!
+  completed: Boolean! @default(value: "false")
+  reminder: DateTime
+  dueDate: DateTime
+}
