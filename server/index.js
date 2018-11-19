@@ -7,15 +7,17 @@ import fs from "fs";
 import https from "https";
 import http from "http";
 import { PubSub } from "apollo-server";
+import jwt from "express-jwt";
 
 const configurations = {
   // Note: You may need sudo to run on port 443
   production: {
     ssl: true,
     port: process.env.PORT || 443,
-    hostname: "example.com"
+    hostname: "example.com",
+    debug: false
   },
-  development: { ssl: false, port: 4000, hostname: "localhost" }
+  development: { ssl: false, port: 4000, hostname: "localhost", debug: false }
 };
 
 const environment = process.env.NODE_ENV || "production";
@@ -26,16 +28,31 @@ const apollo = new ApolloServer({
   cors: true,
   typeDefs,
   resolvers,
+  formatError: error => {
+    // console.log(error);
+    return error;
+  },
+  formatResponse: response => {
+    // console.log(response);
+    return response;
+  },
   // The connection to the database
-  context: req => ({
-    pubsub,
-    ...req,
-    db: new Prisma({
-      typeDefs: "database/generated/prisma.graphql",
-      endpoint: "http://localhost:4466",
-      debug: true
-    })
-  })
+  context: req => {
+    const token = req.headers.authorization || ""; // Get the user token from the headers
+    const user = getUser(token); // Try to recieve a user with the token
+    if (!user) throw new AuthorizationError("You must be logged in.");
+
+    return {
+      user, // Add user to context
+      pubsub,
+      ...req,
+      db: new Prisma({
+        typeDefs: "database/generated/prisma.graphql",
+        endpoint: "http://localhost:4466",
+        debug: config.debug
+      })
+    };
+  }
 });
 
 const app = express();

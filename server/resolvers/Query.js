@@ -27,7 +27,9 @@ const Query = {
     return postsConnection.aggregate.count;
   },
 
-  whatsForDinner: () => {
+  whatsForDinner: (root, args, context, info) => {
+    if (!context.user) return "";
+
     const idx = Math.floor(Math.random() * dinnerOptions.length);
     const foodChoice = dinnerOptions[idx];
     return `Tonight we eat ${foodChoice}`;

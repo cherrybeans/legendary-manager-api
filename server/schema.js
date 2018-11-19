@@ -15,6 +15,14 @@ const typeDefs = gql`
     countStr: String
   }
 
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    todos: [ToDo!]!
+    password: String!
+  }
+
   type ToDo {
     id: ID!
     priority: Priority!

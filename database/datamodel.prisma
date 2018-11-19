@@ -3,6 +3,7 @@ type User {
   name: String!
   email: String! @unique
   todos: [ToDo!]!
+  password: String!
 }
 
 type ToDo {
