@@ -28,7 +28,8 @@ const Query = {
   },
 
   whatsForDinner: (root, args, context, info) => {
-    if (!context.user) return "";
+    // Return null if not admin user (e.g. for seeing all users)
+    if (!context.user || !context.user.roles.includes("admin")) return null;
 
     const idx = Math.floor(Math.random() * dinnerOptions.length);
     const foodChoice = dinnerOptions[idx];
