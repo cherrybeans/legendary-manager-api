@@ -4,4 +4,4 @@ datamodel: datamodel.prisma
 # Deploy hook
 hooks:
   post-deploy:
-    - graphql get-schema --project database
+    - graphql get-schema --project db-postgresql

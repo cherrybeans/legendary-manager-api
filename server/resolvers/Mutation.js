@@ -44,6 +44,15 @@ const Mutation = {
       },
       info
     );
+  },
+
+  signup: async (root, { name, email, password }, context, info) => {
+    return context.models.User.createUser({ name, email, password });
+  },
+
+  login: async (root, { email, password }, context) => {
+    const user = await context.db.query.user({ where: { email } });
+    if (user) return new Buffer(email).toString("base64");
   }
 };
 

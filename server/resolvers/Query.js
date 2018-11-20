@@ -27,13 +27,9 @@ const Query = {
     return postsConnection.aggregate.count;
   },
 
-  whatsForDinner: (root, args, context, info) => {
-    // Return null if not admin user (e.g. for seeing all users)
-    if (!context.user || !context.user.roles.includes("admin")) return null;
-
-    const idx = Math.floor(Math.random() * dinnerOptions.length);
-    const foodChoice = dinnerOptions[idx];
-    return `Tonight we eat ${foodChoice}`;
+  // fetch the profile of currently authenticated user (or null if not authenticated)
+  me: async (root, args, context, info) => {
+    return await context.models.User.getSelf();
   }
 };
 

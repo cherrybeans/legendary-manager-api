@@ -8,6 +8,7 @@ import https from "https";
 import http from "http";
 import { PubSub } from "apollo-server";
 import jwt from "express-jwt";
+import UserAPI from "./models";
 
 const configurations = {
   // Note: You may need sudo to run on port 443
@@ -23,13 +24,26 @@ const configurations = {
 const environment = process.env.NODE_ENV || "production";
 const config = configurations[environment];
 const pubsub = new PubSub();
+const prisma = new Prisma({
+  typeDefs: "database/generated/prisma.graphql",
+  endpoint: "http://localhost:4466",
+  debug: config.debug
+});
+
+const getUser = async ({ req }) => {
+  // simple auth check on every request with HTTP authorization header
+  const auth = (req.headers && req.headers.authorization) || "";
+  const email = new Buffer(auth, "base64").toString("ascii");
+  // find a user by their email (null if not vaild email or does not exist)
+  return await prisma.query.user({ where: { email } });
+};
 
 const apollo = new ApolloServer({
   cors: true,
   typeDefs,
   resolvers,
   formatError: error => {
-    // console.log(error);
+    console.log(error);
     return error;
   },
   formatResponse: response => {
@@ -37,20 +51,14 @@ const apollo = new ApolloServer({
     return response;
   },
   // The connection to the database
-  context: req => {
-    const token = req.headers.authorization || ""; // Get the user token from the headers
-    const user = getUser(token); // Try to recieve a user with the token
-    if (!user) throw new AuthorizationError("You must be logged in.");
-
+  context: async req => {
+    const user = await getUser(req);
     return {
-      user, // Add user to context
-      pubsub,
-      ...req,
-      db: new Prisma({
-        typeDefs: "database/generated/prisma.graphql",
-        endpoint: "http://localhost:4466",
-        debug: config.debug
-      })
+      models: {
+        User: new UserAPI({ user, db: prisma })
+      },
+      db: prisma,
+      pubsub
     };
   }
 });

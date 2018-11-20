@@ -10,17 +10,13 @@ const typeDefs = gql`
     NOTIMPORTANTNOTURGENT
   }
 
-  type Counter {
-    count: Int!
-    countStr: String
-  }
-
   type User {
     id: ID!
     name: String!
     email: String!
-    todos: [ToDo!]!
     password: String!
+    isAdmin: Boolean!
+    todos: [ToDo]!
   }
 
   type ToDo {
@@ -30,19 +26,22 @@ const typeDefs = gql`
     completed: Boolean!
     reminder: DateTime
     dueDate: DateTime
+    user: User!
   }
 
   type Query {
     todo(id: ID!): ToDo
     todos(
       searchString: String
-      filterByType: Priority
+      filter: Priority
       offset: Int
       limit: Int
     ): [ToDo]!
     countTodos: Int!
-
-    whatsForDinner: String!
+    """
+    Queries for the current user
+    """
+    me: User
   }
 
   type Mutation {
@@ -52,13 +51,16 @@ const typeDefs = gql`
       completed: Boolean!
       reminder: DateTime
       dueDate: DateTime
+      userId: ID!
     ): ToDo!
-    deleteToDo(name: String): ToDo
-    updateToDo(name: String): ToDo
+    deleteToDo(id: ID!): ToDo
+    updateToDo(id: ID!): ToDo
+
+    signup(name: String!, email: String!, password: String!): User
+    login(email: String!, password: String): String
   }
 
   type Subscription {
-    counter: Counter!
     todoCreated: ToDo
   }
 `;
