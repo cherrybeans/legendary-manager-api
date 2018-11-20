@@ -8,7 +8,7 @@ import https from "https";
 import http from "http";
 import { PubSub } from "apollo-server";
 import jwt from "express-jwt";
-import UserAPI from "./models";
+import { UserAPI, ToDoAPI } from "./models";
 
 const configurations = {
   // Note: You may need sudo to run on port 443
@@ -55,7 +55,8 @@ const apollo = new ApolloServer({
     const user = await getUser(req);
     return {
       models: {
-        User: new UserAPI({ user, db: prisma })
+        User: new UserAPI({ user, db: prisma }),
+        ToDo: new ToDoAPI({ user, db: prisma })
       },
       db: prisma,
       pubsub

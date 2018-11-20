@@ -1,16 +1,13 @@
 import { TODO_ADDED } from "./Subscription";
 
 const Mutation = {
-  createToDo: async (root, args, { pubsub, db }, info) => {
-    const todo = await db.mutation.createToDo(
+  createToDo: async (root, args, { pubsub }, info) => {
+    const todo = await context.models.ToDoAPI.createToDo(
       {
-        data: {
-          priority: args.priority,
-          description: args.description,
-          completed: false,
-          reminder: args.reminder ? args.reminder : null,
-          dueDate: args.reminder ? args.reminder : null
-        }
+        priority: args.priority,
+        description: args.description,
+        reminder: args.reminder,
+        dueDate: args.reminder
       },
       info
     );

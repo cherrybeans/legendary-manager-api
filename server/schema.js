@@ -42,6 +42,8 @@ const typeDefs = gql`
     Queries for the current user
     """
     me: User
+    user(id: ID!): User
+    users: [User!]
   }
 
   type Mutation {

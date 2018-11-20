@@ -5,7 +5,7 @@ var example_todos = [
     dueDate: new Date(),
     reminder: new Date(),
     completed: false,
-    user: 1
+    useremail: "sigridkvamme@gmail.com"
   },
   {
     description: "This is a red task",
@@ -13,7 +13,7 @@ var example_todos = [
     dueDate: null,
     reminder: new Date(),
     completed: false,
-    user: 1
+    useremail: "anna@arendale.com"
   },
   {
     description: "This is a blue task",
@@ -21,7 +21,7 @@ var example_todos = [
     dueDate: new Date(),
     reminder: new Date(),
     completed: false,
-    user: 1
+    useremail: "anna@arendale.com"
   },
   {
     description: "This is a orange task",
@@ -29,7 +29,7 @@ var example_todos = [
     dueDate: new Date(),
     reminder: null,
     completed: false,
-    user: 2
+    useremail: "elsa@arendale.com"
   }
 ];
 

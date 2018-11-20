@@ -43,14 +43,19 @@ var toDoMutation = `
     $priority: String!
     $description: String!
     $completed: Boolean!
-    $user: User!
+    $useremail: String!
+    $reminder: DateTime
+    $dueDate: DateTime
+
   ) {
     createToDo(
       data: {
         priority: $priority
         description: $description
         completed: $completed
-        user: $user
+        reminder: $reminder
+        dueDate: $dueDate
+        user: { connect: { email: $useremail } }
       }
     ) {
       description

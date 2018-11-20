@@ -2,18 +2,18 @@ import bcrypt from "bcrypt";
 import isEmail from "isemail";
 import { isAdmin, isAuthenticated, isSameUser } from "./util";
 
-class UserAPI {
+export class UserAPI {
   constructor({ user, db }) {
     this.user = user;
     this.db = db;
   }
 
-  getAll = () => {
+  getAll = ({ info }) => {
     if (!isAuthenticated(this.user) || !isAdmin(this.user)) return null;
-    return this.db.query.users();
+    return this.db.query.users({}, info);
   };
 
-  getById = id => {
+  getById = ({ id, info }) => {
     if (
       !isAuthenticated(this.user) ||
       !isSameUser(this.user, id) ||
@@ -21,12 +21,12 @@ class UserAPI {
     )
       return null;
 
-    return this.db.query.user({ where: { id: id } });
+    return this.db.query.user({ where: { id: id } }, info);
   };
 
   getSelf = () => {
     if (!isAuthenticated(this.user))
-      throw new Error("You are not authenticated");
+      throw new Error("You have not logged in. Log in and try again.");
 
     return this.getById(this.user.id);
   };
@@ -47,4 +47,30 @@ class UserAPI {
   };
 }
 
-export default UserAPI;
+export class ToDoAPI {
+  constructor({ user, db }) {
+    this.user = user;
+    this.db = db;
+  }
+
+  getById = id => {
+    if (!isAuthenticated(this.user) || !isSameUser(this.user, id)) return null;
+
+    return this.db.query.user({ where: { id: id } });
+  };
+
+  createToDo = ({ priority, description, reminder, dueDate }) => {
+    if (!isAuthenticated(this.user))
+      throw new Error("You have not logged in. Log in and try again.");
+
+    return this.db.mutation.createToDo({
+      data: {
+        priority: priority,
+        description: description,
+        reminder: reminder,
+        dueDate: dueDate,
+        user: { connect: { id: this.user.id } }
+      }
+    });
+  };
+}

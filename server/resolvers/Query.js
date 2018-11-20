@@ -30,6 +30,14 @@ const Query = {
   // fetch the profile of currently authenticated user (or null if not authenticated)
   me: async (root, args, context, info) => {
     return await context.models.User.getSelf();
+  },
+
+  user: (root, args, context, info) => {
+    return context.models.User.getById({ id: args.id, info });
+  },
+  // Which behaviour should this have when not permissions? null, empty list or list with what you have permission to see, like at least yourself? (might be better for a frontend?)
+  users: (root, args, context, info) => {
+    return context.models.User.getAll({ info });
   }
 };
 
