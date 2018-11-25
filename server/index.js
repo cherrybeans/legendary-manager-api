@@ -18,7 +18,7 @@ const configurations = {
     hostname: "example.com",
     debug: false
   },
-  development: { ssl: false, port: 4000, hostname: "localhost", debug: false }
+  development: { ssl: false, port: 4000, hostname: "localhost", debug: true }
 };
 
 const environment = process.env.NODE_ENV || "production";

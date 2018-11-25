@@ -1,55 +1,54 @@
-import { TODO_ADDED } from "./Subscription";
+import { TODO_ADDED, TODO_UPDATED, TODO_DELETED } from "./constants";
 
 const Mutation = {
-  createToDo: async (root, args, { pubsub }, info) => {
-    const todo = await context.models.ToDoAPI.createToDo(
+  createToDo: async (root, { input }, context, info) => {
+    const todo = await context.models.ToDo.createToDo(
       {
-        priority: args.priority,
-        description: args.description,
-        reminder: args.reminder,
-        dueDate: args.reminder
+        ...input
       },
       info
     );
-
-    pubsub.publish(TODO_ADDED, { todoCreated: todo });
-
-    return todo;
+    context.pubsub.publish(TODO_ADDED, { todoCreated: todo });
+    return { todo };
   },
 
-  // Deletes pokemon by name
-  deleteToDo: (root, args, context, info) => {
-    return context.db.mutation.deleteToDo(
+  deleteToDo: async (root, { input }, context, info) => {
+    const todo = context.models.ToDo.deleteToDo({ ...input }, info);
+    context.pubsub.publish(TODO_DELETED, { todoDeleted: todo });
+    return { todo };
+  },
+
+  updateToDo: async (root, { input }, context, info) => {
+    const todo = await context.models.ToDo.updateToDo(
       {
-        where: {
-          id: args.id
-        }
+        ...input
       },
       info
     );
+    context.pubsub.publish(TODO_UPDATED, { todoUpdated: todo });
+    return { todo };
   },
-  // Increments the star count of the pokemon by name
-  updateToDo: async (root, args, context, info) => {
-    return context.db.mutation.updateToDo(
+
+  toggleToDoCompleted: async (root, { input }, context, info) => {
+    const todo = await context.models.ToDo.toggleToDoCompleted(
       {
-        data: {
-          ...args
-        },
-        where: {
-          id: args.id
-        }
+        ...input
       },
       info
     );
+    context.pubsub.publish(TODO_UPDATED, { todoUpdated: todo });
+    return { todo };
   },
 
-  signup: async (root, { name, email, password }, context, info) => {
-    return context.models.User.createUser({ name, email, password });
+  signup: async (root, { input }, context, info) => {
+    const user = await context.models.User.createUser(input);
+    if (user) return { token: new Buffer(email).toString("base64") };
   },
 
-  login: async (root, { email, password }, context) => {
-    const user = await context.db.query.user({ where: { email } });
-    if (user) return new Buffer(email).toString("base64");
+  login: async (root, { input }, context) => {
+    console.log("input", input);
+    const user = await context.db.query.user({ where: input });
+    if (user) return { token: new Buffer(input.email).toString("base64") };
   }
 };
 

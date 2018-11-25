@@ -1,6 +1,8 @@
 import Query from "./Query";
 import Mutation from "./Mutation";
 import Subscription from "./Subscription";
+import User from "./User";
+import ToDo from "./ToDo";
 
 import { GraphQLScalarType } from "graphql";
 import { Kind } from "graphql/language";
@@ -28,6 +30,8 @@ const resolvers = {
   Query,
   Mutation,
   Subscription,
+  User,
+  ToDo,
   DateTime
 };
 

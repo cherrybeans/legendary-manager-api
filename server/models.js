@@ -9,26 +9,24 @@ export class UserAPI {
   }
 
   getAll = ({ info }) => {
-    if (!isAuthenticated(this.user) || !isAdmin(this.user)) return null;
+    if (!isAuthenticated(this.user) || !isAdmin(this.user)) return [];
     return this.db.query.users({}, info);
   };
 
   getById = ({ id, info }) => {
     if (
-      !isAuthenticated(this.user) ||
-      !isSameUser(this.user, id) ||
-      !isAdmin(this.user)
-    )
-      return null;
-
-    return this.db.query.user({ where: { id: id } }, info);
+      isAuthenticated(this.user) &&
+      (isSameUser(this.user, id) || isAdmin(this.user))
+    ) {
+      return this.db.query.user({ where: { id } }, info);
+    }
+    return null;
   };
 
   getSelf = () => {
     if (!isAuthenticated(this.user))
       throw new Error("You have not logged in. Log in and try again.");
-
-    return this.getById(this.user.id);
+    return this.getById({ id: this.user.id });
   };
 
   createUser = async ({ name, email, password }) => {
@@ -39,11 +37,25 @@ export class UserAPI {
 
     return this.db.mutation.createUser({
       data: {
-        name: name,
-        email: email,
+        name,
+        email,
         password: await bcrypt.hash(password, 10)
       }
     });
+  };
+
+  countTodos = async () => {
+    if (isAuthenticated(this.user)) {
+      const todosConnection = await this.db.query.toDoesConnection(
+        {
+          where: { user: { id: this.user.id } }
+        },
+        `{ aggregate { count } }`
+      );
+      return todosConnection.aggregate.count;
+    }
+
+    return null;
   };
 }
 
@@ -53,24 +65,103 @@ export class ToDoAPI {
     this.db = db;
   }
 
-  getById = id => {
-    if (!isAuthenticated(this.user) || !isSameUser(this.user, id)) return null;
-
-    return this.db.query.user({ where: { id: id } });
+  getById = async ({ id, info }) => {
+    if (isAuthenticated(this.user)) {
+      const data = await this.db.query.toDo(
+        { where: { id } },
+        `{ user { id } }`
+      );
+      if (isSameUser(this.user, data.user.id)) {
+        return this.db.query.toDo({ where: { id } }, info);
+      }
+    }
+    return null;
   };
 
-  createToDo = ({ priority, description, reminder, dueDate }) => {
+  getGroupByUser = ({ info }) => {
+    if (isAuthenticated(this.user)) {
+      return this.db.query.toDoes(
+        { where: { user: { id: this.user.id } } },
+        info
+      );
+    }
+    return null;
+  };
+
+  createToDo = ({ priority, description, reminder, dueDate, info }) => {
     if (!isAuthenticated(this.user))
       throw new Error("You have not logged in. Log in and try again.");
+    return this.db.mutation.createToDo(
+      {
+        data: {
+          priority,
+          description,
+          reminder,
+          dueDate,
+          user: { connect: { id: this.user.id } }
+        }
+      },
+      info
+    );
+  };
 
-    return this.db.mutation.createToDo({
-      data: {
-        priority: priority,
-        description: description,
-        reminder: reminder,
-        dueDate: dueDate,
-        user: { connect: { id: this.user.id } }
-      }
-    });
+  updateToDo = async ({
+    id,
+    priority,
+    description,
+    completed,
+    reminder,
+    dueDate,
+    info
+  }) => {
+    if (!isAuthenticated(this.user))
+      throw new Error("You have not logged in. Log in and try again.");
+    const data = await this.db.query.toDo({ where: { id } }, `{ user { id } }`);
+    if (isSameUser(this.user, data.user.id)) {
+      return this.db.mutation.updateToDo(
+        {
+          where: { id },
+          data: {
+            priority,
+            description,
+            completed,
+            reminder,
+            dueDate
+          }
+        },
+        info
+      );
+    }
+    throw new Error("Can't touch that");
+  };
+
+  toggleToDoCompleted = async ({ id, info }) => {
+    if (!isAuthenticated(this.user))
+      throw new Error("You have not logged in. Log in and try again.");
+    const data = await this.db.query.toDo({ where: { id } }, `{ user { id } }`);
+    if (isSameUser(this.user, data.user.id)) {
+      const todo = await this.db.query.toDo({ where: { id } }, `{ completed }`);
+
+      return this.db.mutation.updateToDo(
+        {
+          where: { id },
+          data: {
+            completed: !todo.completed
+          }
+        },
+        info
+      );
+    }
+    throw new Error("Can't touch that");
+  };
+
+  deleteToDo = async ({ id, info }) => {
+    if (!isAuthenticated(this.user))
+      throw new Error("You have not logged in. Log in and try again.");
+    const data = await this.db.query.toDo({ where: { id } }, `{ user { id } }`);
+    if (isSameUser(this.user, data.user.id)) {
+      return this.db.mutation.deleteToDo({ where: { id } }, info);
+    }
+    throw new Error("Can't touch that");
   };
 }
