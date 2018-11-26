@@ -1,11 +1,11 @@
 import Query from "./Query";
 import Mutation from "./Mutation";
 import Subscription from "./Subscription";
+import User from "./User";
+import ToDo from "./ToDo";
 
 import { GraphQLScalarType } from "graphql";
 import { Kind } from "graphql/language";
-
-const dinnerOptions = ["🍕", "🌭", "🍔", "🥗", "🍣"];
 
 const DateTime = {
   DateTime: new GraphQLScalarType({
@@ -30,10 +30,9 @@ const resolvers = {
   Query,
   Mutation,
   Subscription,
-  DateTime,
-  Counter: {
-    countStr: counter => `Current count: ${counter.count}`
-  }
+  User,
+  ToDo,
+  DateTime
 };
 
 export default resolvers;

@@ -10,23 +10,31 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development babel-watch server/ ",
-    "start:prod": "node server/"
+    "start:prod": "node server/",
+    "seedDb": "./node_modules/.bin/babel-node database/populate_database.js"
   },
   "dependencies": {
+    "apollo-errors": "^1.9.0",
     "apollo-server": "^2.2.2",
     "apollo-server-express": "^2.2.2",
     "babel-core": "^6.26.3",
+    "bcrypt": "^3.0.2",
+    "dotenv": "^6.1.0",
     "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
     "fs": "^0.0.1-security",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^4.0.3",
+    "isemail": "^3.2.0",
+    "lodash": "^4.17.11",
     "node-fetch": "^2.3.0",
     "prisma": "^1.20.7",
     "prisma-binding": "^2.1.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
