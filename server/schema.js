@@ -53,8 +53,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(input: SignupInput!): SignupPayload
-    login(input: LoginInput!): LoginPayload
+    signup(input: SignupInput!): AuthPayload
+    login(input: LoginInput!): AuthPayload
     createToDo(input: createToDoInput!): createToDoPayload
     updateToDo(input: updateToDoInput!): updateToDoPayload
     deleteToDo(input: deleteToDoInput!): deleteToDoPayload
@@ -117,17 +117,13 @@ const typeDefs = gql`
     password: String!
   }
 
-  type SignupPayload {
+  type AuthPayload {
     token: String
   }
 
   input LoginInput {
     email: String!
-    password: String
-  }
-
-  type LoginPayload {
-    token: String
+    password: String!
   }
 
   # Custom scalars and enums

@@ -7,8 +7,9 @@ import fs from "fs";
 import https from "https";
 import http from "http";
 import { PubSub } from "apollo-server";
-import jwt from "express-jwt";
+import jsonwebtoken from "jsonwebtoken";
 import { UserAPI, ToDoAPI } from "./models";
+require("dotenv").config();
 
 const configurations = {
   // Note: You may need sudo to run on port 443
@@ -16,9 +17,16 @@ const configurations = {
     ssl: true,
     port: process.env.PORT || 443,
     hostname: "example.com",
-    debug: false
+    debug: false,
+    endpoint: "/graphql"
   },
-  development: { ssl: false, port: 4000, hostname: "localhost", debug: true }
+  development: {
+    ssl: false,
+    port: 4000,
+    hostname: "localhost",
+    debug: true,
+    endpoint: "/graphql"
+  }
 };
 
 const environment = process.env.NODE_ENV || "production";
@@ -31,11 +39,12 @@ const prisma = new Prisma({
 });
 
 const getUser = async ({ req }) => {
-  // simple auth check on every request with HTTP authorization header
-  const auth = (req.headers && req.headers.authorization) || "";
-  const email = new Buffer(auth, "base64").toString("ascii");
-  // find a user by their email (null if not vaild email or does not exist)
-  return await prisma.query.user({ where: { email } });
+  const token = req.headers && req.headers.authorization;
+  if (token) {
+    const id = jsonwebtoken.verify(token, process.env.JWT_SECRET).id;
+    return await prisma.query.user({ where: { id: id } });
+  }
+  return null;
 };
 
 const apollo = new ApolloServer({
@@ -65,7 +74,8 @@ const apollo = new ApolloServer({
 });
 
 const app = express();
-apollo.applyMiddleware({ app });
+
+apollo.applyMiddleware({ app, path: config.endpoint });
 
 var server;
 if (config.ssl) {

@@ -35,13 +35,16 @@ export class UserAPI {
         "The email entered is not valid. Please enter a valid email."
       );
 
-    return this.db.mutation.createUser({
-      data: {
-        name,
-        email,
-        password: await bcrypt.hash(password, 10)
-      }
-    });
+    return this.db.mutation.createUser(
+      {
+        data: {
+          name,
+          email,
+          password: await bcrypt.hash(password, 10)
+        }
+      },
+      `{ id email }`
+    );
   };
 
   countTodos = async () => {
