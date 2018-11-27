@@ -13,7 +13,7 @@ var example_todos = [
     dueDate: null,
     reminder: new Date(),
     completed: false,
-    useremail: "anna@arendale.com"
+    useremail: "annabuildasnowman@arendale.com"
   },
   {
     description: "This is a blue task",
@@ -21,7 +21,7 @@ var example_todos = [
     dueDate: new Date(),
     reminder: new Date(),
     completed: false,
-    useremail: "anna@arendale.com"
+    useremail: "annabuildasnowman@arendale.com"
   },
   {
     description: "This is a orange task",
@@ -29,26 +29,29 @@ var example_todos = [
     dueDate: new Date(),
     reminder: null,
     completed: false,
-    useremail: "elsa@arendale.com"
+    useremail: "elsagoaway@arendale.com"
   }
 ];
 
 var example_users = [
   {
-    name: "Admin - Sigrid Marita Kvamme",
-    email: "sigridkvamme@gmail.com",
-    password: "Helloworlditsanice world",
+    name: "Admin - Admin Adminsen",
+    email: "admin@adminsen.com",
+    // pwd: Helloworlditsaniceworld
+    password: "$2b$10$KIkrKyBQeg9r2MNcaG2c8uPhnFxF3O/0FhXFK4pznqIM88B4qOTKi",
     isAdmin: true
   },
   {
     name: "Pleb - Anna Princess",
-    email: "anna@arendale.com",
-    password: "DoYouWannaBuildASnowman"
+    email: "annabuildasnowman@arendale.com",
+    // pwd: DoYouWannaBuildASnowman
+    password: "$2b$10$tf83gJn/AxP76EUvYk1fBerrmopzwL3oiBL2RQUapcaWn4J1GDVpq"
   },
   {
     name: "Pleb - Elsa Queen",
-    email: "elsa@arendale.com",
-    password: "GoAwayAnna"
+    email: "elsagoaway@arendale.com",
+    // pwd: GoAwayAnna
+    password: "$2b$10$HOGahgI7IBxj6N.3LV60BOyA7RiMgQdJy4qMSarD/5l5wYlQ00AUS"
   }
 ];
 
