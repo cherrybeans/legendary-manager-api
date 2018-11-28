@@ -4,7 +4,10 @@ const Query = {
   },
 
   todos: (root, args, context, info) => {
-    return context.models.ToDo.getGroupByUser({ info });
+    return context.models.ToDo.getGroupByUser({
+      priority: args.priority,
+      info
+    });
   },
 
   countTodos: async (root, args, context, info) => {

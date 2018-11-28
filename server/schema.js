@@ -49,7 +49,7 @@ const typeDefs = gql`
     """
     Fetch all your todos.
     """
-    todos: [ToDo]
+    todos(priority: Priority): [ToDo]
   }
 
   type Mutation {

@@ -81,12 +81,13 @@ export class ToDoAPI {
     return null;
   };
 
-  getGroupByUser = ({ info }) => {
+  getGroupByUser = ({ priority, info }) => {
+    const where = priority
+      ? { where: { user: { id: this.user.id }, priority } }
+      : { where: { user: { id: this.user.id } } };
+
     if (isAuthenticated(this.user)) {
-      return this.db.query.toDoes(
-        { where: { user: { id: this.user.id } } },
-        info
-      );
+      return this.db.query.toDoes(where, info);
     }
     return null;
   };
